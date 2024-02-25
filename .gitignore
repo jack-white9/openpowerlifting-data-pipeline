@@ -1,4 +1,10 @@
-logs/
-.env
+# Python
+__pycache__/
+
+# Terraform
 *.tfstate
 .terraform/
+
+# Misc
+.env
+logs/
