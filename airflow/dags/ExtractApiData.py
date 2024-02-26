@@ -1,5 +1,5 @@
 from airflow.decorators import dag, task
-from pendulum import datetime, duration
+from pendulum import yesterday, duration
 from scripts.extract_data import extract_data
 
 default_args = {
@@ -13,7 +13,7 @@ default_args = {
 
 
 @dag(
-    start_date=datetime(2024, 2, 24),
+    start_date=yesterday(),
     schedule="@daily",
     default_args=default_args,
 )

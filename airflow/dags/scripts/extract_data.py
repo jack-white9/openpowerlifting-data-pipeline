@@ -4,12 +4,17 @@ import zipfile
 import boto3
 from botocore.exceptions import ClientError
 from datetime import datetime
+from requests_toolbelt.adapters.socket_options import TCPKeepAliveAdapter
 
 
 def get_data(url):
     try:
         print(f"Fetching data from {url}")
-        response = requests.get(url)
+        session = requests.Session()
+        # fixes timeout issue on slow connection
+        keep_alive = TCPKeepAliveAdapter(idle=120, count=120, interval=60)
+        session.mount("https://", keep_alive)
+        response = session.get(url)
         return response
     except requests.exceptions.RequestException as e:
         raise e
