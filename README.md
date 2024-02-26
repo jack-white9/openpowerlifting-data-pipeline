@@ -41,14 +41,22 @@ cd terraform
 terraform apply
 ```
 
-3. Start local Airflow services using Docker Compose:
+3. Add AWS credentials to Docker environment
+
+```sh
+touch airflow/.env
+echo "AWS_ACCESS_KEY_ID=<your aws access key id>" >> airflow/.env
+echo "AWS_SECRET_ACCESS_KEY=<your aws secret access key>" >> airflow/.env
+```
+
+4. Start local Airflow services using Docker Compose:
 
 ```sh
 cd airflow
 docker compose up --build -d
 ```
 
-4. Access the Airflow web interface:
+5. Access the Airflow web interface:
 
 Open a web browser and go to [http://localhost:8080](http://localhost:8080) to view the Airflow web UI.
 
