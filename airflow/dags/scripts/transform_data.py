@@ -5,10 +5,14 @@ from dotenv import load_dotenv
 import os
 
 
-def download_from_s3(bucket, object_key):
-    print(f"Fetching {object_key} from S3 bucket: {bucket}")
+def download_latest_from_s3(bucket):
+    print(f"Fetching latest file from S3 bucket: {bucket}")
     s3_client = boto3.client("s3")
-    object = s3_client.get_object(Bucket=bucket, Key=object_key)
+    objects = s3_client.list_objects_v2(Bucket=bucket)["Contents"]
+    objects.sort(key=lambda o: o["LastModified"])
+    latest_key = objects[-1]["Key"]
+    print(f"Found latest file: {latest_key}")
+    object = s3_client.get_object(Bucket=bucket, Key=latest_key)
     return object
 
 
@@ -22,6 +26,7 @@ def read_csv_to_df(csv_object):
 def write_parquet_to_s3(df, s3_url):
     print(f"Writing dataframe to {s3_url}")
     df.to_parquet(s3_url, compression="gzip")
+    print(f"Successfully wrote to {s3_url}")
     return df
 
 
@@ -30,9 +35,7 @@ if __name__ == "__main__":
     os.getenv("AWS_ACCESS_KEY_ID")
     os.getenv("AWS_SECRET_ACCESS_KEY")
 
-    csv_object = download_from_s3(
-        "openpowerlifting-data-raw", "2024-02-28-openpowerlifting-data.csv"
-    )
+    csv_object = download_latest_from_s3("openpowerlifting-data-raw")
     df = read_csv_to_df(csv_object)
     write_parquet_to_s3(
         df, "s3://openpowerlifting-data-curated/openpowerlifting-data.parquet"
