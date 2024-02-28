@@ -27,7 +27,8 @@ def unzip_file(zip_file):
         csv_file = [
             file for file in zip_file.namelist() if file.lower().endswith(".csv")
         ][0]
-        return csv_file
+        csv_file_contents = zip_file.open(csv_file)
+        return csv_file_contents
 
 
 def upload_to_s3(file, bucket, object_key):
@@ -36,7 +37,10 @@ def upload_to_s3(file, bucket, object_key):
     try:
         print(f"Uploading {file} to S3 bucket {bucket}")
         s3_client.put_object(
-            Body=file, Bucket=bucket, Key=f"{formatted_datetime}-{object_key}"
+            Body=file,
+            Bucket=bucket,
+            Key=f"{formatted_datetime}-{object_key}",
+            ContentType="text/csv",
         )
         print(f"{file} successfully uploaded to {bucket}")
     except ClientError as e:
