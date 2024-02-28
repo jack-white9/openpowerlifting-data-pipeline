@@ -19,3 +19,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "bucket-config" {
     status = "Enabled"
   }
 }
+
+resource "aws_s3_bucket" "curated" {
+  bucket = "openpowerlifting-data-curated"
+}

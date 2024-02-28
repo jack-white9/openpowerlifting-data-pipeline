@@ -3,6 +3,7 @@ __pycache__/
 
 # Terraform
 *.tfstate
+*.tfstate.*
 .terraform/
 
 # Misc
