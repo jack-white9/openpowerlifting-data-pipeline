@@ -39,7 +39,7 @@ def upload_to_s3(file, bucket, object_key):
         s3_client.put_object(
             Body=file,
             Bucket=bucket,
-            Key=f"{formatted_datetime}-{object_key}",
+            Key=f"{formatted_datetime}-{object_key}.csv",
             ContentType="text/csv",
         )
         print(f"{file} successfully uploaded to {bucket}")
