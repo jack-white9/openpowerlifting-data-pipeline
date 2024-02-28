@@ -53,7 +53,7 @@ def extract_data():
     csv_file = unzip_file(zip_file)
     upload_to_s3(
         csv_file,
-        "openpowerlifting-data-bronze",
+        "openpowerlifting-data-raw",
         "openpowerlifting-data",
     )
 
