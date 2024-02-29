@@ -1,6 +1,7 @@
 from io import BytesIO
 import pandas as pd
 import boto3
+from pyarrow.fs import S3FileSystem
 
 
 def download_latest_from_s3(bucket):
@@ -74,13 +75,23 @@ def transform_df(df):
     df["Tested"] = df["Tested"].replace({"Yes": True, "No": False, None: False})
     # rename "Tested" column to "DrugTested" for downstream reporting clarity
     df.rename(columns={"Tested": "DrugTested"}, inplace=True)
+    # create year/month columns for partitioning
+    df["Date"] = pd.to_datetime(df["Date"])
+    df["Year"] = pd.DatetimeIndex(df["Date"]).year
+    df["Month"] = pd.DatetimeIndex(df["Date"]).month
+    df["Day"] = pd.DatetimeIndex(df["Date"]).day
     return df
 
 
 def write_parquet_to_s3(df, bucket, object_key):
     print(f"Writing dataframe to s3://{bucket}/{object_key}")
     with BytesIO() as bytes_io:
-        df.to_parquet(bytes_io, compression="gzip")
+        df.to_parquet(
+            bytes_io,
+            compression="gzip",
+            partition_cols=["Year", "Month", "Day"],
+            filesystem=S3FileSystem(),
+        )
         bytes_io.seek(0)
         s3_client = boto3.client("s3")
         s3_client.upload_fileobj(bytes_io, Bucket=bucket, Key=object_key)
