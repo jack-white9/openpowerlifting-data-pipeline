@@ -2,6 +2,8 @@ from io import BytesIO
 import requests
 import zipfile
 import boto3
+import os
+from dotenv import load_dotenv
 from botocore.exceptions import ClientError
 from datetime import datetime
 from requests_toolbelt.adapters.socket_options import TCPKeepAliveAdapter
@@ -48,6 +50,10 @@ def upload_to_s3(file, bucket, object_key):
 
 
 def extract_data():
+    load_dotenv()
+    os.getenv("AWS_ACCESS_KEY_ID")
+    os.getenv("AWS_SECRET_ACCESS_KEY")
+
     url = "https://openpowerlifting.gitlab.io/opl-csv/files/openpowerlifting-latest.zip"
     zip_file = get_data(url)
     csv_file = unzip_file(zip_file)
