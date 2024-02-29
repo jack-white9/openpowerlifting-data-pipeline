@@ -70,6 +70,10 @@ def read_csv_to_df(csv_object):
 
 
 def transform_df(df):
+    # replace "Yes/No" values with True/False
+    df["Tested"] = df["Tested"].replace({"Yes": True, "No": False, None: False})
+    # rename "Tested" column to "DrugTested" for downstream reporting clarity
+    df.rename(columns={"Tested": "DrugTested"}, inplace=True)
     return df
 
 
