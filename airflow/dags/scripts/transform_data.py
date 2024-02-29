@@ -1,4 +1,4 @@
-from io import StringIO
+from io import BytesIO
 import pandas as pd
 import boto3
 
@@ -60,8 +60,12 @@ def read_csv_to_df(csv_object):
         "MeetName": "object",
     }
     print("Reading CSV file into dataframe")
-    csv_string = csv_object["Body"].read().decode("utf-8")
-    df = pd.read_csv(StringIO(csv_string), dtype=dtypes)
+    chunks = pd.read_csv(
+        csv_object["Body"],
+        dtype=dtypes,
+        chunksize=10000,  # use smaller chunks if memory issues arise
+    )
+    df = pd.concat(chunks, ignore_index=True)
     return df
 
 
@@ -69,10 +73,14 @@ def transform_df(df):
     return df
 
 
-def write_parquet_to_s3(df, s3_url):
-    print(f"Writing dataframe to {s3_url}")
-    df.to_parquet(s3_url, compression="gzip")
-    print(f"Successfully wrote to {s3_url}")
+def write_parquet_to_s3(df, bucket, object_key):
+    print(f"Writing dataframe to s3://{bucket}/{object_key}")
+    with BytesIO() as bytes_io:
+        df.to_parquet(bytes_io, compression="gzip")
+        bytes_io.seek(0)
+        s3_client = boto3.client("s3")
+        s3_client.upload_fileobj(bytes_io, Bucket=bucket, Key=object_key)
+    print(f"Successfully wrote to s3://{bucket}/{object_key}")
     return df
 
 
@@ -81,7 +89,7 @@ def transform_data():
     df = read_csv_to_df(csv_object)
     df = transform_df(df)
     write_parquet_to_s3(
-        df, "s3://openpowerlifting-data-curated/openpowerlifting-data.parquet"
+        df, "openpowerlifting-data-curated", "openpowerlifting-data.parquet"
     )
 
 
