@@ -2,6 +2,8 @@
 
 A data pipeline extracting data from [Open Powerlifting](https://www.openpowerlifting.org/) records.
 
+![OpenPowerlifting-Dashboard](https://github.com/jack-white9/openpowerlifting-data-pipeline/assets/83393304/b6965d1d-1255-41f7-a04f-4cf51715bd42)
+
 ## Table of Contents
 
 - [Project Overview](#project-overview)
