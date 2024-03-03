@@ -6,6 +6,7 @@ from visualisations.plot_avg_male_totals_by_weight import plot_avg_male_totals_b
 from visualisations.plot_avg_female_totals_by_weight import (
     plot_avg_female_totals_by_weight,
 )
+from visualisations.plot_world_records import plot_world_records
 from visualisations.plot_lifters_per_country import plot_lifters_per_country
 
 
@@ -32,12 +33,12 @@ def init_streamlit():
         initial_sidebar_state="expanded",
     )
     alt.themes.enable("dark")
-    st.title("Open Powerlifting Data Analysis")
+    st.title("OpenPowerlifting Data Analysis")
 
     col = st.columns((2, 4.5, 1.5), gap="medium")
 
     with col[0]:
-        st.markdown("#### Average Totals by Weight Class")
+        st.markdown("#### Average Totals")
         st.markdown("##### Male")
         plot_avg_male_totals_by_weight()
         st.markdown("##### Female")
@@ -48,6 +49,7 @@ def init_streamlit():
         plot_dots_per_country()
 
         st.markdown("#### World Records")
+        plot_world_records()
 
     with col[2]:
         st.markdown("#### Top Countries")
