@@ -1,2 +1,4 @@
 duckdb==0.10.0
 streamlit==1.31.1
+plotly.express==0.4.1
+country_converter==1.2
